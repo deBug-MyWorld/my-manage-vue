@@ -45,3 +45,10 @@ export function userRoles(userId){
     })
 }
 
+export function updatePass(params){
+    return request({
+        url:'',
+        method:'post',
+        data:params
+    })
+}
