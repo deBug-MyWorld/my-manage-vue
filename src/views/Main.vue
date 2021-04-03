@@ -15,7 +15,7 @@
           </div>
           <div class="right_box">
             <el-dropdown>
-              <img src="@/assets/img/info.png">
+              <img src="@/assets/img/avatar.png">
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item icon="el-icon-house">系统首页</el-dropdown-item>
                 <el-dropdown-item icon="el-icon-user">个人中心</el-dropdown-item>

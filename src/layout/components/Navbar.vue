@@ -11,7 +11,7 @@
 
       <el-dropdown class="avatar-container" id="avatar-container" trigger="click" @command="handleCommand">
         <div class="avatar-wrapper">
-          <img src="@/assets/img/info.png" class="user-avatar">
+          <img :src="avatar==null? DefaultAvatar:avatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" style="top:55px;" >
@@ -28,17 +28,22 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
-
+import Avatar from '@/assets/img/avatar.png'
 export default {
   components: {
     Breadcrumb,
     Hamburger,
     Screenfull
   },
+  data(){
+    return{
+      DefaultAvatar:Avatar
+    }
+  },
   computed: {
     ...mapGetters([
       'sidebar',
-      // 'avatar'
+      'avatar'
     ])
   },
   methods: {
