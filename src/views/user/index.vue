@@ -35,6 +35,9 @@
         <el-tag size="mini" v-if="scope.row.enabled" type="success">启用</el-tag>
         <el-tag size="mini" v-else type="danger">禁用</el-tag>
       </template>  
+      <template v-slot="scope" v-else-if="column.property ==='avatar'"> 
+        <el-image :src="scope.row.avatar==null? DefaultAvatar:scope.row.avatar" :preview-src-list="srcList" class="userAvatar"></el-image>
+      </template>
       <template slot-scope="scope" v-else>
         {{scope.row[column.property]}}
       </template>      
@@ -105,6 +108,7 @@ import { mapGetters } from 'vuex'
 import { isvalidPhone } from '@/utils/validate'
 import { page,del,edit,add } from '@/api/crud'
 import {getRoleList} from '@/api/role'
+import Avatar from '@/assets/img/avatar.png'
 export default {
   name:'User',
   data(){
@@ -139,11 +143,17 @@ export default {
       allColumnSelected:true,
       allColumnsSelectedIndeterminate: false,
       key:1,
+      DefaultAvatar:Avatar,
       defaultFormColumns: [
         {
           label : '用户名',
           visible: true,
           property:'username'
+        },
+        {
+          label : '头像',
+          visible: true,
+          property:'avatar'
         },
         {
           label : '性别',
@@ -197,6 +207,7 @@ export default {
         roles:[]
       },
       roleDatas:[],
+      srcList:[], // 图片预览
     }
   },
   computed:{
@@ -260,6 +271,14 @@ export default {
       let res = await page(this.crud.user,params)
       this.tableData = res.data.records
       this.queryParams.total = res.data.total
+      this.srcList = []
+      this.tableData.forEach(data => {
+        if (data.avatar == null) {
+          this.srcList.push(this.DefaultAvatar)
+        } else {
+          this.srcList.push(data.avatar)
+        }
+      });
       setTimeout(() => {
         this.tableLoading = false
       }, 500);
@@ -350,5 +369,10 @@ export default {
 <style lang="scss" scoped>
 .el-row{
   margin-bottom: 20px;
+}
+.userAvatar{
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
 }
 </style>
