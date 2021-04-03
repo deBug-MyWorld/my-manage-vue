@@ -15,7 +15,7 @@
           <i class="el-icon-caret-bottom" />
         </div>
         <el-dropdown-menu slot="dropdown" style="top:55px;" >
-          <el-dropdown-item icon="el-icon-user">个人中心</el-dropdown-item>
+          <el-dropdown-item icon="el-icon-user" command="handleUserCenter">个人中心</el-dropdown-item>
           <el-dropdown-item divided icon="el-icon-switch-button" command="handleLogOut">退出登录</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
@@ -52,6 +52,9 @@ export default {
     },
     handleCommand(command){
       this[command]();
+    },
+    handleUserCenter(){
+      this.$router.push('/user/center')
     },
     handleLogOut(){
       this.$confirm('确定注销并退出系统吗？','提示',{
