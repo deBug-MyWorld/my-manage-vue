@@ -9,12 +9,12 @@
         <screenfull id="screenfull" class="right-menu-item hover-effect" style="margin-right:15px;" />
       </el-tooltip>
 
-      <el-dropdown class="avatar-container" id="avatar-container" trigger="click" @command="handleCommand">
+      <el-dropdown class="avatar-container right-menu-item hover-effect" id="avatar-container" trigger="click" @command="handleCommand">
         <div class="avatar-wrapper">
           <img :src="avatar==null? DefaultAvatar:avatar" class="user-avatar">
           <i class="el-icon-caret-bottom" />
         </div>
-        <el-dropdown-menu slot="dropdown" style="top:55px;" >
+        <el-dropdown-menu slot="dropdown">
           <el-dropdown-item icon="el-icon-user" command="handleUserCenter">个人中心</el-dropdown-item>
           <el-dropdown-item divided icon="el-icon-switch-button" command="handleLogOut">退出登录</el-dropdown-item>
         </el-dropdown-menu>
