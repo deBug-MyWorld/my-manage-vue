@@ -68,7 +68,7 @@ export default {
               duration: 1500
             })
             setTimeout(() => {
-              store.dispatch('LogOut').then(() => {
+              store.dispatch('user/LogOut').then(() => {
                 location.reload() // 为了重新实例化vue-router对象 避免bug
               })
             }, 1500)

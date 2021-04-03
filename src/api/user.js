@@ -45,9 +45,17 @@ export function userRoles(userId){
     })
 }
 
+export function editUser(user){
+    return request({
+        url:'api/user/center',
+        method:'post',
+        data:user
+    })
+}
+
 export function updatePass(params){
     return request({
-        url:'',
+        url:'api/user/updatePass',
         method:'post',
         data:params
     })

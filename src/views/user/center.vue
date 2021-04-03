@@ -33,14 +33,16 @@
           <el-tabs v-model="activeName" @tab-click="handleClick">
             <el-tab-pane label="用户资料" name="first">
               <el-form ref="form" :model="form" :rules="rules" style="margin-top: 10px;" size="small" label-width="65px">
-                <el-form-item label="用户名称" prop="username">
+                <el-form-item label="用户名" prop="username">
                   <el-input v-model="form.username" style="width: 35%" />
-                  <span style="color: #C0C0C0;margin-left: 10px;">用户名称不能重复</span>
+                  <span style="color: #C0C0C0;margin-left: 10px;">用户名修改后则需重新登录</span>
                 </el-form-item>
                 <el-form-item label="手机号" prop="phone">
                   <el-input v-model="form.phone" style="width: 35%;" />
-                  <span style="color: #C0C0C0;margin-left: 10px;">手机号码不能重复</span>
                 </el-form-item>
+                <el-form-item label="邮箱" prop="email">
+                  <el-input v-model="form.email" style="width: 35%;" />
+                </el-form-item>                
                 <el-form-item label="性别">
                   <el-radio-group v-model="form.gender" style="width: 178px">
                     <el-radio label="男">男</el-radio>
@@ -72,6 +74,7 @@ import { isvalidPhone } from '@/utils/validate'
 import { getToken } from '@/utils/token'
 import Avatar from '@/assets/img/avatar.png'
 import updatePass from './center/updatePass'
+import { editUser } from '@/api/user'
 export default {
   name: 'Center',
   components: { myUpload ,updatePass},
@@ -96,9 +99,10 @@ export default {
       },
       form: {},
       rules: {
-        phone: [
-          { required: true, trigger: 'blur', validator: validPhone }
-        ]
+        username:[{required: true,trigger:'blur',message:'用户名不能为空'}],
+        phone: [{ required: true, trigger: 'blur', validator: validPhone }],
+        email:[{required: true,trigger:'blur',message:'邮箱不能为空'},
+        { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }],
       }
     }
   },
@@ -108,7 +112,7 @@ export default {
     ])
   },
   created() {
-    this.form = { id: this.user.userId, gender: this.user.gender, phone: this.user.phone }
+    this.form = { userId: this.user.userId, gender: this.user.gender, phone: this.user.phone,email:this.user.email,username:this.user.username }
     store.dispatch('user/GetInfo').then(() => {})
   },
   methods: {
@@ -122,6 +126,22 @@ export default {
       store.dispatch('user/GetInfo').then(() => {})
     },
     doSubmit() {
+      if (this.$refs['form']) {
+        this.$refs['form'].validate((valid) => {
+          if (valid) {
+            this.saveLoading = true
+            editUser(this.form).then((res) => {
+              if (res.isok) {
+                this.$message.success("修改用户信息成功！")
+                store.dispatch('user/GetInfo').then(() => {})
+                this.saveLoading = false                
+              }
+            }).catch(() => {
+              this.saveLoading = false
+            })
+          }
+        })
+      }
     }
   }
 }
