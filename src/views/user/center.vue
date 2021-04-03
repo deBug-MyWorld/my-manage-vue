@@ -1,5 +1,7 @@
 <template>
-  <div class="app-container">用户中心</div>
+  <div class="app-container">
+    
+  </div>
 </template>
 
 <script>
