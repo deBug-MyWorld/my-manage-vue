@@ -5,6 +5,7 @@ import app from './modules/app'
 import user from './modules/user'
 import permission from './modules/permission'
 import crud from './modules/crud'
+import api from './modules/api'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -12,7 +13,8 @@ export default new Vuex.Store({
     app,
     user,
     permission,
-    crud
+    crud,
+    api
   },
   getters
 })

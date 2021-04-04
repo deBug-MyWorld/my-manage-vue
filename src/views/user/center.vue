@@ -10,7 +10,7 @@
             <div style="text-align: center">
               <div class="el-upload">
                 <img :src="user.avatar==null ? DefaultAvatar : user.avatar" title="点击上传头像" class="avatar" @click="toggleShow">
-                <myUpload v-model="show" :headers="headers" url="/updateAvatarApi" @crop-upload-success="cropUploadSuccess"/>
+                <myUpload v-model="show" field="avatar" :headers="headers" :url="updateAvatarApi" @crop-upload-fail="cropUploadFail" @crop-upload-success="cropUploadSuccess"/>
               </div>
             </div>
             <ul class="user-info">
@@ -109,6 +109,7 @@ export default {
   computed: {
     ...mapGetters([
       'user',
+      'updateAvatarApi',
     ])
   },
   created() {
@@ -124,6 +125,11 @@ export default {
     },
     cropUploadSuccess(jsonData, field) {
       store.dispatch('user/GetInfo').then(() => {})
+    },
+    cropUploadFail(status,field){
+      if (status === 500) {
+        this.$message.error("文件大小超过限制!")
+      }
     },
     doSubmit() {
       if (this.$refs['form']) {

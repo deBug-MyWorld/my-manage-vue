@@ -8,7 +8,8 @@ const getters = {
     permissions: state => state.user.permissions,
     loadMenus: state => state.user.loadMenus,
     MyRouters: state => state.permission.routers,
-    crud: state => state.crud.url
+    crud: state => state.crud.url,
+    updateAvatarApi: state => state.api.updateAvatarApi,
   }
   export default getters
   
