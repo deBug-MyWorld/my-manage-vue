@@ -10,6 +10,8 @@ const getters = {
     MyRouters: state => state.permission.routers,
     crud: state => state.crud.url,
     updateAvatarApi: state => state.api.updateAvatarApi,
+    sqlApi: state => state.api.sqlApi,
+    swaggerApi: state => state.api.swaggerApi
   }
   export default getters
   
