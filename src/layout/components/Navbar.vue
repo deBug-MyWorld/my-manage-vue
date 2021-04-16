@@ -5,10 +5,12 @@
     <breadcrumb class="breadcrumb-container" id="breadcrumb-container" />
 
     <div class="right-menu">
+      <el-tooltip content="模糊搜索" effect="dark" placement="bottom">
+        <search id="header-search" class="right-menu-item " />
+      </el-tooltip>      
       <el-tooltip content="全屏缩放" effect="dark" placement="bottom">
-        <screenfull id="screenfull" class="right-menu-item hover-effect" style="margin-right:15px;" />
+        <screenfull id="screenfull" class="right-menu-item hover-effect"/>
       </el-tooltip>
-
       <el-dropdown class="avatar-container right-menu-item hover-effect" id="avatar-container" trigger="click" @command="handleCommand">
         <div class="avatar-wrapper">
           <img :src="avatar==null? DefaultAvatar:avatar" class="user-avatar">
@@ -28,12 +30,14 @@ import { mapGetters } from 'vuex'
 import Breadcrumb from '@/components/Breadcrumb'
 import Hamburger from '@/components/Hamburger'
 import Screenfull from '@/components/Screenfull'
+import Search from '@/components/HeaderSearch'
 import Avatar from '@/assets/img/avatar.png'
 export default {
   components: {
     Breadcrumb,
     Hamburger,
-    Screenfull
+    Screenfull,
+    Search
   },
   data(){
     return{
