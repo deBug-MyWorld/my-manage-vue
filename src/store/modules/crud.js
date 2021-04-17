@@ -2,7 +2,8 @@ const state = {
     url: {
         user: 'api/user',
         role: 'api/role',
-        menu: 'api/menu'
+        menu: 'api/menu',
+        log: 'api/logs',
     }
 }
 

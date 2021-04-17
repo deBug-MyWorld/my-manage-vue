@@ -56,6 +56,38 @@
             </el-tab-pane>
             <!--    操作日志    -->
             <el-tab-pane label="操作日志" name="second">
+              <el-table v-loading="loading" :data="data" style="width: 100%;">
+                <el-table-column prop="description" label="行为" />
+                <el-table-column prop="ip" label="IP" />
+                <el-table-column prop="addr" label="操作地址" />
+                <el-table-column prop="time" label="请求耗时" align="center">
+                  <template slot-scope="scope">
+                    <el-tag v-if="scope.row.time <= 300">{{ scope.row.time }}ms</el-tag>
+                    <el-tag v-else-if="scope.row.time <= 1000" type="warning">{{ scope.row.time }}ms</el-tag>
+                    <el-tag v-else type="danger">{{ scope.row.time }}ms</el-tag>
+                  </template>
+                </el-table-column>
+                <el-table-column
+                  align="right"
+                >
+                  <template slot="header">
+                    <div style="display:inline-block;float: right;cursor: pointer" @click="init">创建日期<i class="el-icon-refresh" style="margin-left: 40px" /></div>
+                  </template>
+                  <template slot-scope="scope">
+                    <span>{{ scope.row.createTime }}</span>
+                  </template>
+                </el-table-column>
+              </el-table>
+              <!-- 分页区 -->
+              <el-pagination
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                :current-page="this.queryParams.pageNum"
+                :page-sizes="[5, 10, 15, 20]"
+                :page-size="this.queryParams.pageSize"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="this.queryParams.total"
+              ></el-pagination>
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -75,6 +107,7 @@ import { getToken } from '@/utils/token'
 import Avatar from '@/assets/img/avatar.png'
 import updatePass from './center/updatePass'
 import { editUser } from '@/api/user'
+import { page } from '@/api/crud'
 export default {
   name: 'Center',
   components: { myUpload ,updatePass},
@@ -103,7 +136,14 @@ export default {
         phone: [{ required: true, trigger: 'blur', validator: validPhone }],
         email:[{required: true,trigger:'blur',message:'邮箱不能为空'},
         { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }],
-      }
+      },
+      loading: false,
+      data: [],
+      queryParams: {  // 分页参数
+          pageNum: 1,
+          pageSize: 5,
+          total: 0
+      },
     }
   },
   computed: {
@@ -122,6 +162,32 @@ export default {
       this.show = !this.show;
     },
     handleClick(tab, event) {
+      if (tab.name === 'second') {
+        this.init()
+      }
+    },
+    async init(){
+      this.loading = true
+      const params = {
+        pageNum:this.queryParams.pageNum,
+        pageSize:this.queryParams.pageSize,
+        username:this.user.username
+      }
+      var url = 'api/logs/user'
+      let res = await page(url,params)
+      this.data = res.data.records
+      this.queryParams.total = res.data.total
+      setTimeout(() => {
+        this.loading = false
+      }, 500);
+    },
+    handleSizeChange(val){
+      this.queryParams.pageSize = val
+      this.init()
+    },
+    handleCurrentChange(val){
+      this.queryParams.pageNum = val
+      this.init()
     },
     cropUploadSuccess(jsonData, field) {
       store.dispatch('user/GetInfo').then(() => {})
