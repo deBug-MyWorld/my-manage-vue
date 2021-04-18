@@ -12,7 +12,7 @@
         </el-col>            
     </el-row> 
     <!-- 表格区 -->
-    <el-table size='mini' style="margin-bottom:10px;margin-top:20px;" :header-cell-style="{background:'#F2F6FC'}" stripe :data="tableData" v-loading="tableLoading">
+    <el-table size='mini' style="margin-bottom:10px;margin-top:20px;" :row-class-name="tableRowClassName" :header-cell-style="{background:'#F2F6FC'}"  :data="tableData" v-loading="tableLoading">
       <el-table-column type="expand">
           <template slot-scope="props">
             <el-form label-position="left" inline class="demo-table-expand">
@@ -22,6 +22,9 @@
                 <el-form-item label="请求参数">
                     <span>{{ props.row.params }}</span>
                 </el-form-item>
+                <el-form-item label="异常详情" v-if="props.row.type ==='ERROR'">
+                    <el-button size="mini" type="text" @click="info(props.row)">查看详情</el-button>
+                </el-form-item>                
             </el-form>              
           </template>
       </el-table-column>
@@ -58,6 +61,10 @@
       layout="total, sizes, prev, pager, next, jumper"
       :total="this.queryParams.total"
     ></el-pagination>
+    <!--异常详情弹框-->
+    <el-dialog :visible.sync="dialog" title="异常详情" append-to-body top="30px" width="85%">
+      <pre v-highlightjs="errorInfo"><code class="java" /></pre>
+    </el-dialog>    
   </div>
 </template>
 
@@ -120,7 +127,9 @@ export default {
                 text:'DELETE',
                 value:'DELETE'
             },            
-        ]        
+        ],
+        errorInfo:'',
+        dialog:false,        
     };
   },
   computed:{
@@ -130,6 +139,16 @@ export default {
     this.getLogList()
   },
   methods:{
+    info(row){
+      this.dialog = true,
+      this.errorInfo = row.exceptionDetail
+    },
+    tableRowClassName({row,rowIndex}){
+      if (row.type === 'ERROR') {
+        return 'warning-row';
+      }
+      return '';
+    },
     handleSearch(){
         this.queryPage(this.queryParams.pageNum,this.queryParams.pageSize,this.query,this.dateValue)
     },
@@ -181,5 +200,8 @@ export default {
 }
 .demo-table-expand .el-form-item__content {
   font-size: 12px;
+}
+.el-table .warning-row {
+  background: oldlace;
 }
 </style>

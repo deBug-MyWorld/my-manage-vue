@@ -55,9 +55,10 @@ export default {
       };
     },
     watch:{
-      $router:{
+      $route:{
         // 加载登录页后，直接获取，登录页地址栏的的redirect参数，赋值给this.redirect
         handler:function(route){
+          console.log(route)
           this.redirect = route.query && route.query.redirect
         },
         immediate:true
@@ -81,6 +82,7 @@ export default {
         this.loading = true;
         this.$store.dispatch('user/Login',this.loginForm).then(()=>{
           this.loading = false
+          console.log(this.redirect)
           this.$router.push({ path:this.redirect || '/'},()=>{})
           this.$message.success("登录成功！")
         }).catch(()=>{
