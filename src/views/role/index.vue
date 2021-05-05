@@ -19,11 +19,7 @@
           <el-button-group>
             <el-button type="info" size="mini" icon="el-icon-search" plain @click="showSearch"></el-button>
             <el-button  size="mini" icon="el-icon-refresh" @click="getRoleList"></el-button>
-            <el-popover placement="bottom-end" trigger="click" width="150">
-              <el-button  size="mini" slot="reference" icon="el-icon-s-grid"></el-button>
-              <el-checkbox v-model="allColumnSelected" :indeterminate="allColumnsSelectedIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
-              <el-checkbox v-for="item in defaultFormColumns" :key="item.label" v-model="item.visible" @change="handleCheckedTableColumnsChange(item)">{{ item.label }}</el-checkbox>
-            </el-popover>
+            <DynamicTable :defaultFormColumns="defaultFormColumns" @tableColumns="changeValues" ref="dynamicTable"></DynamicTable>
           </el-button-group>        
       </el-col>
     </el-row> 
@@ -104,15 +100,17 @@
 import { mapGetters } from 'vuex'
 import { list,del,edit,add,page } from '@/api/crud'
 import { getMenuIdsByRoleId,permission } from '@/api/role'
+import DynamicTable from '@/components/DynamicTable'
 export default {
   name:'Role',
+  components:{
+    DynamicTable
+  },  
   data(){
     return{
       tableLoading:true,
       query:'',
       search:true,
-      allColumnSelected:true,
-      allColumnsSelectedIndeterminate: false,
       key:1,
       defaultFormColumns: [
         {
@@ -172,48 +170,15 @@ export default {
   },
   mounted(){
     this.getRoleList()
-    this.tableColumns = this.defaultFormColumns
+    this.tableColumns = this.$refs.dynamicTable.tableColumns
   },
   methods:{
+    changeValues(value){
+      this.tableColumns = value.tableColumns
+      this.key = value.key
+    },
     showSearch(){
       this.search = !this.search
-    },
-    handleCheckAllChange(val) {
-      if (val === false){
-        this.allColumnSelected = true
-        return
-      }
-      this.defaultFormColumns.forEach(column => {
-        if (!column.visible){
-          column.visible = true
-        }
-      })
-      this.allColumnSelected = val
-      this.allColumnsSelectedIndeterminate = false
-      this.updateFormColums()
-    },
-    handleCheckedTableColumnsChange(item){
-      let totalCount = 0
-      let selectedCount = 0
-      this.tableColumns.forEach(column => {
-        ++totalCount
-        selectedCount += column.visible ? 1:0
-      })
-      if (selectedCount === 0){
-        this.$message.warning('请至少选择一列！！！')
-        this.$nextTick(function() {
-          item.visible = true
-        })        
-        return
-      }
-      this.allColumnSelected = selectedCount === totalCount
-      this.allColumnsSelectedIndeterminate = selectedCount !== totalCount && selectedCount !==0
-      this.updateFormColums()
-    },
-    // 动态表格
-    updateFormColums(){
-      this.tableColumns = this.defaultFormColumns.filter(i => i.visible == true)
-      this.key = this.key + 1 //  为了保证table 每次都会重渲
     },
     resetQuery(){
       this.query = ''
