@@ -183,7 +183,7 @@ export default {
       tableData:[],
       queryParams: {  // 分页参数
         pageNum: 1,
-        pageSize: 8,
+        pageSize: 5,
         total: 0
       },
       userDialog: false,
