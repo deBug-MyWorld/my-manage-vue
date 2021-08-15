@@ -173,9 +173,6 @@ export default {
       this.tableColumns = value.tableColumns
       this.key = value.key
     },
-    showSearch(){
-      this.search = !this.search
-    },
     resetQuery(){
       this.query = ''
     },

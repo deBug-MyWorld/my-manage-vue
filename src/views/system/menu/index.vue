@@ -169,14 +169,11 @@ export default {
       this.tableColumns = value.tableColumns
       this.key = value.key
     },
-    showSearch(){
-      this.search = !this.search
-    },
     resetQuery(){
       this.query = ''
     },
     handleSearch(){
-      this.$message.error('懒得开发')
+      this.$message.error('下次一定')
     },
     handleAdd(){
       this.title = '新增菜单'
