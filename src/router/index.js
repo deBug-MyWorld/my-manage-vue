@@ -21,12 +21,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/main',
-    name: 'Main',
-    component: () => import('@/views/Main'),
-    hidden: true
-  },
-  {
     path: '/',
     component: Layout,
     redirect: '/dashboard',
@@ -56,7 +50,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'center',
-        component: (resolve) => require(['@/views/user/center'], resolve),
+        component: (resolve) => require(['@/views/system/user/center'], resolve),
         name: '个人中心',
         meta: { title: '个人中心' }
       }

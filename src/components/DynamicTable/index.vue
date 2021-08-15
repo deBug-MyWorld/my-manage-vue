@@ -1,9 +1,13 @@
 <template>
+  <el-button-group>
+    <el-button type="info" size="mini" icon="el-icon-search" plain @click="toggleSearch()"></el-button>
+    <el-button  size="mini" icon="el-icon-refresh" @click="refresh()"></el-button>
     <el-popover placement="bottom-end" trigger="click" width="150">
       <el-button  size="mini" slot="reference" icon="el-icon-s-grid"></el-button>
       <el-checkbox v-model="allColumnSelected" :indeterminate="allColumnsSelectedIndeterminate" @change="handleCheckAllChange">全选</el-checkbox>
       <el-checkbox v-for="item in defaultFormColumns" :key="item.label" v-model="item.visible" @change="handleCheckedTableColumnsChange(item)">{{ item.label }}</el-checkbox>
-    </el-popover>     
+    </el-popover>  
+  </el-button-group>   
 </template>
 
 <script>
@@ -11,10 +15,14 @@ import { parse } from 'path-to-regexp';
 export default {
   name:'DynamicTable',
   props:{
-      defaultFormColumns:{
-          require:true,
-          type:Array
-      },
+    defaultFormColumns:{
+      require:true,
+      type:Array
+    },
+    search: {
+      type: Boolean,
+      default: true,
+    },
   },
   data(){
     return{
@@ -28,6 +36,14 @@ export default {
     this.tableColumns = this.defaultFormColumns
   },
   methods:{
+    // 搜索
+    toggleSearch() {
+      this.$emit("update:search", !this.search);
+    },
+    // 刷新
+    refresh() {
+      this.$emit("queryTable");
+    },
     handleCheckAllChange(val) {
       if (val === false){
         this.allColumnSelected = true

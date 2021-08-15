@@ -16,11 +16,7 @@
           <el-button icon="el-icon-plus" size="mini" type="primary" :disabled="hasPerm('menu:add')" @click="handleAdd">新增</el-button>
       </el-col>
       <el-col :span="4" :offset="18">
-          <el-button-group>
-            <el-button type="info" size="mini" icon="el-icon-search" plain @click="showSearch"></el-button>
-            <el-button  size="mini" icon="el-icon-refresh" @click="getMenuList"></el-button>
-            <DynamicTable :defaultFormColumns="defaultFormColumns" @tableColumns="changeValues" ref="dynamicTable"></DynamicTable>
-          </el-button-group>        
+        <DynamicTable :defaultFormColumns="defaultFormColumns" @tableColumns="changeValues" ref="dynamicTable" :search.sync="search" @queryTable="getMenuList"></DynamicTable>      
       </el-col>
   </el-row> 
   <!-- 表格区 -->
