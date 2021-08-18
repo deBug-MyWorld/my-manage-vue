@@ -50,7 +50,7 @@
       :total="this.queryParams.total"
     ></el-pagination>
     <!-- 新增/修改角色对话框 -->
-    <el-dialog :visible.sync="roleDialog" :title="title" @closed="handleClose" width="350px">
+    <el-dialog :visible.sync="roleDialog" :title="title" @closed="handleClose" width="570px">
       <el-form ref="roleForm" :model="roleForm" :rules="roleRules" size="small" label-width="80px">
         <el-form-item label="角色名称" prop="roleName">
           <el-input v-model="roleForm.roleName"></el-input>
@@ -68,6 +68,20 @@
           :active-value="1"
           :inactive-value="0">
         </el-switch>
+        </el-form-item>
+        <el-form-item label="数据范围" prop="dataScope">
+          <el-select v-model="roleForm.dataScope" placeholder="请选择数据范围" @change="changeScope">
+            <el-option v-for="item in dataScopes" :key="item" :label="item" :value="item"/>
+          </el-select>
+        </el-form-item>
+        <el-form-item v-if="roleForm.dataScope === '自定义'" label="数据权限" prop="deptIds">
+          <treeselect
+            v-model="deptDatas"
+            :options="deptOptions"
+            multiple
+            style="width: 380px"
+            placeholder="请选择"
+          />          
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -95,12 +109,15 @@
 <script>
 import { mapGetters } from 'vuex'
 import { list,del,edit,add,page } from '@/api/crud'
+import { getDeptIdsByRoleId } from '@/api/dept'
 import { getMenuIdsByRoleId,permission } from '@/api/role'
 import DynamicTable from '@/components/DynamicTable'
+import Treeselect from '@riophae/vue-treeselect'
+import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 export default {
   name:'Role',
   components:{
-    DynamicTable
+    DynamicTable,Treeselect
   },  
   data(){
     return{
@@ -123,7 +140,12 @@ export default {
           label : '状态',
           visible: true,
           property:'status'
-        },    
+        },  
+        {
+          label : '数据权限',
+          visible: true,
+          property:'dataScope'
+        },          
         {
           label : '创建时间',
           visible: true,
@@ -143,6 +165,8 @@ export default {
         roleId:null,
         roleName:null,
         roleCode:null,
+        dataScope:null,
+        deptIds:[],
         status:1,
       },
       roleRules:{
@@ -158,7 +182,10 @@ export default {
       permissionForm:{
         roleId:null,
         menuIds:[]
-      }
+      },
+      dataScopes: ['全部', '本级', '自定义'],
+      deptOptions:[],
+      deptDatas: [],
     }
   },
   computed:{
@@ -176,6 +203,27 @@ export default {
     resetQuery(){
       this.query = ''
     },
+    // 如果数据权限为自定义则获取部门数据
+    async changeScope() {
+      if (this.roleForm.dataScope === '自定义') {
+        let res = await list(this.crud.dept)
+        this.deptOptions = this.getTreeData(res.data)
+      }
+    },
+    getTreeData(val){
+      let arr = []
+      val.forEach(data =>{
+        let obj = {
+          id: data.deptId,
+          label:data.deptName,
+        }
+        if (data.children && data.children.length > 0){
+          obj.children = this.getTreeData(data.children)
+        }
+        arr.push(obj)
+      })
+      return arr;
+    },    
     handleSearch(){
       this.queryPage(this.queryParams.pageNum,this.queryParams.pageSize,this.query)
     },
@@ -199,6 +247,7 @@ export default {
     handleAdd(){
       this.title = '新增角色'
       this.roleDialog = true
+      this.deptDatas = []
     },
     handleEdit(row){
       this.roleDialog = true
@@ -206,6 +255,14 @@ export default {
       this.$nextTick(()=>{
         this.roleForm = Object.assign({},this.roleForm,row)
         this.roleForm.roleId = row.roleId
+        if (this.roleForm.dataScope === '自定义') {
+          list(this.crud.dept).then(res=>{
+           this.deptOptions = this.getTreeData(res.data)
+          })
+          getDeptIdsByRoleId(row.roleId).then(res=>{
+            this.deptDatas = res.data
+          })     
+        }
         console.log(this.roleForm)
       })
     },
@@ -260,6 +317,9 @@ export default {
         if (!valid) {
           return false
         } else {
+          if (this.roleForm.dataScope ==='自定义') {
+            this.roleForm.deptIds = this.deptDatas
+          }
           if (this.roleForm.roleId === null) {
             let res = await add(this.crud.role,this.roleForm)
             if(res!=undefined && res.isok){
@@ -271,6 +331,7 @@ export default {
               this.$message.success("修改成功！")
             }
           }
+          console.log(this.roleForm)
           this.getRoleList()
           this.roleDialog = false
         }

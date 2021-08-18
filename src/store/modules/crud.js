@@ -4,6 +4,7 @@ const state = {
         role: 'api/role',
         menu: 'api/menu',
         log: 'api/logs',
+        dept: 'api/dept'
     }
 }
 
